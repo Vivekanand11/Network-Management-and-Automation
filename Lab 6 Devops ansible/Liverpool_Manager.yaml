@@ -1,0 +1,11 @@
+- name: group_by
+  hosts: Liverpool
+  tasks:
+    - group_by:
+       key: done
+    - name: sleep for port 8080 to become open
+      wait_for:
+       port: 8080
+       delay: 10
+    - name: Setting host facts
+      set_fact: one_fact="something" other_fact="{{a}}"

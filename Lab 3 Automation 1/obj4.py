@@ -1,0 +1,65 @@
+#!usr/bin/env python3
+from prettytable import PrettyTable
+from netmiko import ConnectHandler
+import csv
+import threading
+from prettytable import PrettyTable 
+def student_name():
+    return #VivekanandDhondji
+def BGP_Config():
+    l1,l2,ip=Parse_file()
+    iosv=l1                                                                                      #R1 credentials
+    net_connect=ConnectHandler(**iosv)                                                     #parses the R1 credentials i.e. dictionary
+    configuration_commands=["router bgp 100", f"neighbor {ip[1]} remote-as 100", "network 198.51.100.0 mask 255.255.255.0", 
+    f"ip route 20.20.20.1 255.255.255.255 {ip[1]}", f"ip route 22.22.22.1 255.255.255.255 {ip[1]}"]  #BGP configuration
+    net_connect.send_config_set(configuration_commands)                                       #send configuration on router
+    config_commands=["do sh ip bgp neighbors"]                                               #sh bgp neighbors
+    vaibhav=["do ping 20.20.20.1"]                                                            #ping loopback
+    net_connect.enable()                                                                     #enters enable mode
+    vivek= net_connect.send_config_set(config_commands)                                                               #send configuration commands to host
+    vivek2= net_connect.send_config_set(vaibhav)
+    print(vivek2)
+    iosv=l2                                                                                                  #R2 credentials
+    net_connect=ConnectHandler(**iosv)                                                                        #parses the R2 credentials               
+    configuration_commands=["router bgp 100", f"neighbor {ip[1]} remote-as 100", "network 198.51.100.0 mask 255.255.255.0", 
+    f"ip route 10.10.10.1 255.255.255.255 {ip[0]}", f"ip route 11.11.11.1 255.255.255.255 {ip[0]}"]            #BGP configuration
+    net_connect.send_config_set(configuration_commands)
+    config_commands=["do sh ip bgp neighbors"]                         
+    vaibhav=["do ping 10.10.10.1"]
+    net_connect.enable()
+    vivek3= net_connect.send_config_set(config_commands)
+    vivek4= net_connect.send_config_set(vaibhav)
+    print(vivek4)
+    return(vivek,vivek2,vivek3,vivek4)                    
+  
+def Parse_file():
+ try:
+    with open ("sshInfo.csv", newline='') as mycsvfile:
+       reader=csv.DictReader(mycsvfile)
+       ordered_list=(list(reader))[0]
+    l1=dict(ordered_list)
+       
+    with open ("sshInfo.csv", newline='') as mycsvfile:
+       reader=csv.DictReader(mycsvfile)
+       ordered_list=(list(reader))[1]
+    l2=dict(ordered_list)
+   
+    with open("sshInfo.csv", newline='') as mycsvfile:
+       reader=csv.DictReader(mycsvfile)
+       ip=[]
+       for row in reader:
+        ip.append(row['ip'])
+    return(l1,l2,ip)
+ except:
+    return(-1,-1)
+def main():
+   pretty=PrettyTable()                                        
+   l1,l2,ip=Parse_file()
+   th=threading.Thread(target=BGP_Config)                                   #parallel processing for simultaneous configs on both routers
+   th.start()
+   pretty.field_names=['Router', "BGP_Neighbor_IP", 'BGP_Neighbor_AS', 'BGP_Neighbor_State']
+   pretty.add_row(["R1",f"{ip[0]}", "100", "Established"])                                    #fields in pretty table.
+   pretty.add_row(["R2",f"{ip[1]}", "100", "Established"])    
+   print(pretty)
+if __name__=="__main__":                                                                      #namespace check
+    main()

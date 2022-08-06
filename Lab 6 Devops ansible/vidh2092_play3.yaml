@@ -1,0 +1,26 @@
+ - name: configure IBGP on router R1
+    hosts: R1
+    gather_facts: no
+    tasks:
+     - name: IBGP configuration
+       ios_config:
+        src:/home/netman/Downloads/hosts-file.txt
+       bgp:
+        config:
+         bgp_as: 100
+         neighbors:
+         - neighbor: 198.51.100.3
+
+  - name: Configure IBGP on router R2
+    hosts: R2
+    gather_facts: no
+    tasks:
+     - name: IBGP configs
+       ios_config:
+        src:/home/netman/Downloads/hosts-file.txt
+       bgp:
+        config:
+         bgp_as: 100
+         neighbors:
+          - neighbor 198.51.100.1
+

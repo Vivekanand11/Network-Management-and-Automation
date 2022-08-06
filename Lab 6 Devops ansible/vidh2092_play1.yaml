@@ -1,0 +1,108 @@
+
+---
+  - name: obj 3.4 get routing table
+    hosts: Liverpool
+    tasks:
+
+     - name: routing
+       shell:
+         "netstat -rn"
+
+       register: process1
+     - name: copy files to Liverpool host
+       copy:
+         content: "{{process1.stdout}}"
+         dest: /Liverpool_Admin/Route_Info/process1.txt
+#Running process in Liverpool
+  - name: obj 3.4 get running processes
+    hosts: Liverpool
+    tasks:
+
+     - name: running process
+       shell:
+         "ps -ef|head -n 11"
+
+       register: process3
+     - name: copy files to Liverpool host
+       copy:
+         content: "{{process3.stdout}}"
+         dest: /Liverpool_Admin/Route_Info/process3.txt
+#Routing table in RealMadrid
+  - name: obj 3.4 get routing table
+    hosts: RealMadrid
+    tasks:
+
+     - name: routing
+       shell:
+         "netstat -rn"
+       register: process2
+     - name: copy files to RealMadrid admin
+  copy:
+         content: "{{process3.stdout}}"
+         dest: /Liverpool_Admin/Route_Info/process3.txt
+#Routing table in RealMadrid
+  - name: obj 3.4 get routing table
+    hosts: RealMadrid
+    tasks:
+
+     - name: routing
+       shell:
+         "netstat -rn"
+       register: process2
+     - name: copy files to RealMadrid admin
+       copy:
+         content: "{{process2.stdout}}"
+         dest: /RealMadrid_Admin/Route_Info/process2.txt
+#Running process in RealMadrid
+  - name: obj 3.4 get running processes
+    hosts: RealMadrid
+    tasks:
+
+     - name: running process
+       shell:
+         "ps -ef|head -n 11"
+
+       register: process4
+     - name: copy files to RealMadrid host
+       copy:
+         content: "{{process4.stdout}}"
+         dest: /RealMadrid_Admin/Route_Info/process4.txt
+
+  - name: scp
+    hosts: localhost
+     - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/process1.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+     - name: scp file transfer
+       expect:
+ - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/process1.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/process3.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+  - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@172.16.10.1:/RealMadrid_Admin/Route_Info/process2.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@172.16.10.1:/RealMadrid_Admin/Route_Info/process4.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"

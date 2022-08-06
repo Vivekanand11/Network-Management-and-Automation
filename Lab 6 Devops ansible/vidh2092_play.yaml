@@ -1,0 +1,246 @@
+- name: Obj 3.2 creating groups
+  hosts: vivek
+  become: true
+  tasks:
+   - name: create groups
+     group:
+      name: "{{item}}"
+     loop:
+      - Attack
+      - Defense
+      - Captain
+
+- name: obj 3.2 create users on Liverpool
+  hosts: Liverpool
+  become: true
+  tasks:
+   - name: create users
+     user:
+      name: "{{ item.name }}"
+      state: present
+      group: "{{item.group}}"
+     loop:
+      - name: Hkewell
+        group: Attack
+        mode: '666'
+        create_home: true
+        home: /home/HKewell
+        shell: /bin/bash
+      - name: MOwen
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        create_home: true
+        home: /home/MOwen
+        shell: /bin/bash
+        group: Attack
+      - name: JCarragher
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/JCarragher
+     group: "{{item.group}}"
+     loop:
+      - name: Hkewell
+        group: Attack
+        mode: '666'
+        create_home: true
+        home: /home/HKewell
+        shell: /bin/bash
+      - name: MOwen
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        create_home: true
+        home: /home/MOwen
+        shell: /bin/bash
+        group: Attack
+      - name: JCarragher
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/JCarragher
+        shell: /bin/bash
+      - name: DAgger
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/DAgger
+        shell: /bin/bash
+      - name: SGerrard
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Captain
+        mode: '777'
+        create_home: true
+        home: /home/SGerrard
+        shell: /bin/bash
+
+     group: "{{item.group}}"
+     loop:
+      - name: Hkewell
+        group: Attack
+        mode: '666'
+        create_home: true
+        home: /home/HKewell
+        shell: /bin/bash
+      - name: MOwen
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        create_home: true
+        home: /home/MOwen
+        shell: /bin/bash
+        group: Attack
+      - name: JCarragher
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/JCarragher
+        shell: /bin/bash
+      - name: DAgger
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/DAgger
+        shell: /bin/bash
+      - name: SGerrard
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Captain
+        mode: '777'
+        create_home: true
+        home: /home/SGerrard
+        shell: /bin/bash
+
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/RCarlos
+        shell: /bin/bash
+      - name: FCannavaro
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Defense
+        mode: '111'
+        create_home: true
+        home: /home/FCannavaro
+        shell: /bin/bash
+      - name: ZZidane
+        password: "$1$bWV2sDHE$cbnLHcu2T64gtTyXmmj1i0"
+        group: Captain
+        mode: '777'
+      create: yes
+
+
+
+       register: process3
+     - name: copy files to Liverpool host
+       copy:
+         content: "{{process3.stdout}}"
+         dest: /Liverpool_Admin/Route_Info/process3.txt
+#Routing table in RealMadrid
+  - name: obj 3.4 get routing table
+    hosts: RealMadrid
+    tasks:
+
+     - name: routing
+       shell:
+         "netstat -rn"
+       register: process2
+     - name: copy files to RealMadrid admin
+       copy:
+         content: "{{process2.stdout}}"
+         dest: /RealMadrid_Admin/Route_Info/process2.txt
+#Running process in RealMadrid
+  hosts: RealMadrid
+    tasks:
+
+     - name: running process
+       shell:
+         "ps -ef|head -n 11"
+
+       register: process4
+     - name: copy files to RealMadrid host
+       copy:
+         content: "{{process4.stdout}}"
+         dest: /RealMadrid_Admin/Route_Info/process4.txt
+
+  - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/process1.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/process3.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+  - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@172.16.10.1:/RealMadrid_Admin/Route_Info/process2.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+     - name: scp file transfer
+       expect:
+         command: 'scp netman@172.16.10.1:/RealMadrid_Admin/Route_Info/process4.txt /home/netman/Downloads'
+         responses:
+           (.*)password: "netman"
+#Assemble module
+  - name: assemble module
+    hosts: Liverpool
+    tasks:
+     - name: assemble
+       assemble:
+        src: /home/MOwen/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+
+     - name: assemble
+       assemble:
+        src: /home/DAgger/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+
+
+     - name: assemble
+       assemble:
+        src: /home/SGerrard/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+
+  - name: assemble module
+    hosts: RealMadrid
+    tasks:
+     - name: assemble
+       assemble:
+        src: /home/Lfigo/.ssh
+        dst: /home/RealMadrid_authorizedkeys.txt
+
+     - name: assemble
+       assemble:
+        src: /home/FCannavaro/.ssh
+        dst: /home/RealMadrid_authorizedkeys.txt
+
+
+     - name: assemble
+       assemble:
+        src: /home/ZZidane/.ssh
+        dst: /home/RealMadrid_authorizedkeys.txt
+- name: group_by
+  hosts: Liverpool
+  tasks:
+    - group_by:
+       key: done
+    - name: sleep for port 8080 to become open
+      wait_for:
+       port: 8080
+       delay: 10
+    - name: Setting host facts
+      set_fact: one_fact="something" other_fact="{{a}}"
+
+- name: Template a file to /RealMadrid
+  hosts: RealMadrid
+  tasks:
+   - name: template eg
+     template:
+      src: /home/Lfigo/deluser.conf
+      dest: /home
+
+

@@ -1,0 +1,56 @@
+#Assemble module
+  - name: assemble module
+    hosts: Liverpool
+    tasks:
+     - name: assemble
+       assemble:
+        src: /home/MOwen/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+     - name: Append the contents to the file
+       shell: touch v1.txt
+        dst: /home/Liverpool_authorizedkeys.txt
+
+     - name: assemble
+       assemble:
+        src: /home/DAgger/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+     - name: Append the contents to the file
+       shell: touch v2.txt
+        dst: /home/Liverpool_authorizedkeys.txt
+
+     - name: assemble
+       assemble:
+        src: /home/SGerrard/.ssh
+        dst: /home/Liverpool_authorizedkeys.txt
+     - name: Append the contents to the file
+       shell: touch v3.txt
+        dst: /home/Liverpool_authorizedkeys.txt
+
+  - name: assemble module
+    hosts: RealMadrid
+    tasks:
+     - name: assemble
+       assemble:
+        src: /home/Lfigo/.ssh
+        dst: /home/RealMadrid_authorizedkeys.txt
+     - name: Append the contents to the file
+       shell: touch n1.txt
+        dst: /home/RealMadrid_authorizedkeys.txt
+  - name: Append the contents to the file
+       shell: touch n1.txt
+        dst: /home/RealMadrid_authorizedkeys.txt
+ 
+     expect:
+      command: 'scp netman@192.168.10.1:/home/Liverpool_authorizedkeys.txt /home/netman/Downloads
+      responses:
+       (.*)password: "netman"
+
+
+  - name: scp
+    hosts: localhost
+    tasks:
+     - name: scp file transfer
+     expect:
+      command: 'scp netman@172.16.10.1:/home/RealMadrid_authorizedkeys.txt /home/netman/Downloads
+      responses:
+       (.*)password: "netman"

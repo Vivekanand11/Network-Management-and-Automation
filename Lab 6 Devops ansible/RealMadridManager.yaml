@@ -1,0 +1,8 @@
+- name: Template a file to /RealMadrid
+  hosts: RealMadrid
+  tasks:
+   - name: template eg
+     template:
+      src: /home/Lfigo/deluser.conf
+      dest: /home
+

@@ -1,0 +1,7 @@
+import subprocess as sp
+
+Ping_Scan=sp.getoutput('nmap -Pn 10.201.36.231')
+print(Ping_Scan)
+
+with open ('VivekDhondji.txt','w') as f1:
+    f1.write(Ping_Scan)

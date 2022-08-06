@@ -1,0 +1,19 @@
+hostname {{ item.Hostname}}
+!
+interface loopback 1
+ip address {{item.loopback}}
+!
+interface fa0/0
+ip address {{ item.ip1 }}
+!
+interface  fa1/0
+ip address {{ item.ip2 }}
+!
+interface fa2/0
+ip address {{ item.ip3 }}
+!
+router ospf {{OSPF Process_ID}}
+network {{item.network1}} area {{item.OSPF_Area}}
+network {{item.network2}} area {{item.OSPF_Area}}
+network {{item.network3}} area {{item.OSPF_Area}} 
+network {{item.network4}} area {{item.OSPF_Area}}
